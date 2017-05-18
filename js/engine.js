@@ -138,9 +138,8 @@ var Engine = (function(global) {
                 ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
             }
         }
-
         renderEntities();
-        player.drawScore();
+        game.displayGameResults();
     }
 
     /* This function is called by the render function and is called on each game
