@@ -1,6 +1,7 @@
 var game = {
     canvasWidth: 505,
     canvasOffset: 50,
+    //rowHeight: 83,
     rowHeight: 83,
     leftBoundary: 0,
     rightBoundary: 435,
@@ -53,22 +54,26 @@ Drawable.prototype.render = function() {
 // Enemies our player must avoid
 //
 var enemyX = [-50, -150, -250, -350, -450];
-var row2 = getRowValues(2); //y co-ordinates per row
-var row3 = getRowValues(3); //y co-ordinates per row
-var row4 = getRowValues(4); //y co-ordinates per row
-var row5 = getRowValues(5); //y co-ordinates per row
+var enemyY = [138, 177, 221, 260, 304, 343, 387, 426];
+var enemySpriteLeft = 'images/enemy-bugNTL.png';
+var enemySpriteRight = 'images/enemy-bugNTR.png';
+// var row2 = getRowValues(2); //y co-ordinates per row
+// var row3 = getRowValues(3); //y co-ordinates per row
+// var row4 = getRowValues(4); //y co-ordinates per row
+// var row5 = getRowValues(5); //y co-ordinates per row
 
-var Enemy = function(x, y, speed) {
+var Enemy = function(x, y, speed, sprite) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
-    Drawable.call(this, x, y);
-    this.startX = [-50, -150, -250, -350, -450];
+    Drawable.call(this, x, y, sprite);
+    this.startX = x;
+    this.startY = y;
     this.speed = speed;
     this.width = 47;
     this.height = 34;
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
-    this.sprite = 'images/enemy-bugNT.png';
+    // this.sprite = 'images/enemy-bugNTL.png';
 }
 
 Enemy.prototype = Object.create(Drawable.prototype);
@@ -80,11 +85,29 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-    if (this.x > game.rightBoundary) {
-        this.x = -50;
-    } else {
-        this.x = this.x + (this.speed * dt);
+    //Bugs from right
+    if (this.sprite === enemySpriteRight) {
+        if (this.x < game.leftBoundary) {
+            this.x = game.canvasWidth;
+        } else {
+            this.x -= this.speed * dt;
+        }
     }
+
+    //Bugs from left
+    if (this.sprite === enemySpriteLeft) {
+        if (this.x > game.rightBoundary) {
+            this.x = 0;
+            // this.reset();
+            //console.log("y ", + this.y);
+        } else {
+            // this.y += randomize(-1,1);
+            this.x += this.speed * dt;
+        }
+    }
+
+    //makes bugs jitter vertically
+    this.y = this.startY + randomize(-0.5, 0.5);
     this.checkCollision();
 };
 
@@ -122,10 +145,8 @@ Enemy.prototype.goFaster = function() {
 
 Enemy.prototype.reset = function() {
     //this.x = initial x argument;
-    enemy1.x = this.startX[0];
-    enemy2.x = this.startX[1];
-    enemy3.x = this.startX[2];
-    console.log(enemy1.x, enemy2.x, enemy3.x);
+    this.x = this.startX;
+    console.log(this.x);
 }
 
 
@@ -236,12 +257,32 @@ Player.prototype.reset = function() {
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
-var enemy1 = new Enemy(enemyX[0], randomize(row2[0], row2[1]), 40);
-var enemy2 = new Enemy(enemyX[1], randomize(row2[0], row2[1]), 40);
-var enemy3 = new Enemy(enemyX[2], randomize(row3[0], row3[1]), 60);
-var allEnemies = [enemy1, enemy2, enemy3];
+// var enemy1 = new Enemy(enemyX[0], randomize(row2[0], row2[1]), 10);
+// var enemy2 = new Enemy(enemyX[1], randomize(row2[0], row2[1]), 40);
+// var enemy3 = new Enemy(enemyX[2], randomize(row3[0], row3[1]), 60);
+var enemy1 = new Enemy(enemyX[0], enemyY[0], 40, enemySpriteLeft);
+var enemy2 = new Enemy(enemyX[1], enemyY[1], 40, enemySpriteRight);
+var enemy3 = new Enemy(enemyX[2], enemyY[2], 60, enemySpriteRight);
+var enemy4 = new Enemy(enemyX[3], enemyY[3], 60, enemySpriteLeft);
+var allEnemies = [enemy1, enemy2, enemy3, enemy4];
 var player = new Player(playerStartX, playerStartY);
 
+
+// function checkforEnemies(enemy1, enemy2){
+//     if (enemy1.x < enemy2.x + enemy2.width &&
+//         enemy1.x + enemy1.width > enemy2.x &&
+//         enemy1.y < enemy2.y + enemy2.height &&
+//         enemy1.y + enemy1.height > enemy2.y) {
+//         console.log("Collision with buddy!");
+//             if (enemy1.speed > enemy2.speed){
+//                 enemy2.speed = enemy2.speed + 20;
+//             } else if (enemy1.speed < enemy2.speed){
+//                 enemy1.speed = enemy1.speed + 20;
+//             } else {
+//                 enemy1.speed = enemy2.speed;
+//             }
+//             }
+//     }
 
 
 
@@ -262,14 +303,14 @@ function randomize(min, max) {
 }
 
 //use this function to calculate y values per row for enemy movement
-function getRowValues(row) {
-    var values = [];
-    var objectHeight = 34;
-    var min = game.canvasOffset + (row - 1) * game.rowHeight;
-    var max = game.canvasOffset + row * game.rowHeight - objectHeight;
-    values.push(min, max);
-    return values;
-}
+// function getRowValues(row) {
+//     var values = [];
+//     var objectHeight = 34;
+//     var min = game.canvasOffset + (row - 1) * game.rowHeight;
+//     var max = game.canvasOffset + row * game.rowHeight - objectHeight;
+//     values.push(min, max);
+//     return values;
+// }
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
