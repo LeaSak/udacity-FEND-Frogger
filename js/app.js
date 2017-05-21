@@ -86,6 +86,7 @@ Enemy.prototype.update = function(dt) {
     // which will ensure the game runs at the same speed for
     // all computers.
     //Bugs from right
+    //console.log(allEnemies);
     if (this.sprite === enemySpriteRight) {
         if (this.x < game.leftBoundary) {
             this.x = game.canvasWidth;
@@ -107,7 +108,8 @@ Enemy.prototype.update = function(dt) {
     }
 
     //makes bugs jitter vertically
-    this.y = this.startY + randomize(-0.5, 0.5);
+    this.y = this.startY + randomize(-0.6, 0.6);
+    // this.scanForFriends();
     this.checkCollision();
 };
 
@@ -128,7 +130,30 @@ Enemy.prototype.checkCollision = function() {
         }
     }
 
+    //check for collision with other enemies
+    for (var i = 0; i < allEnemies.length; i++){
+        var other = allEnemies[i];
+        var that = this;
+        if (other != this &&
+            this.x < other.x + other.width &&
+        this.x + this.width > other.x &&
+        this.y < other.y + other.height &&
+        this.y + this.height > other.y
+            ) {
+            //finds slower friend
+            // store collision speed of faster enemy
+            var tmpSpeed = this.speed;
+            // accelerate slower enemy
+            this.speed = other.speed;
+            // decelerate faster enemy
+            other.speed = tmpSpeed;
+            console.log("This bug is now travelling @ " + this.speed);
+            console.log("this bug is now travelling @ " + other.speed);
+        }
+    }
+
 }
+
 
 Enemy.prototype.goFaster = function() {
     if (player.level === 2) {
@@ -257,33 +282,14 @@ Player.prototype.reset = function() {
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
-// var enemy1 = new Enemy(enemyX[0], randomize(row2[0], row2[1]), 10);
-// var enemy2 = new Enemy(enemyX[1], randomize(row2[0], row2[1]), 40);
-// var enemy3 = new Enemy(enemyX[2], randomize(row3[0], row3[1]), 60);
+
 var enemy1 = new Enemy(enemyX[0], enemyY[0], 40, enemySpriteLeft);
 var enemy2 = new Enemy(enemyX[1], enemyY[1], 40, enemySpriteRight);
 var enemy3 = new Enemy(enemyX[2], enemyY[2], 60, enemySpriteRight);
 var enemy4 = new Enemy(enemyX[3], enemyY[3], 60, enemySpriteLeft);
-var allEnemies = [enemy1, enemy2, enemy3, enemy4];
+var enemy5 = new Enemy(enemyX[2], enemyY[3], 80, enemySpriteLeft);
+var allEnemies = [enemy1, enemy2, enemy3, enemy4, enemy5];
 var player = new Player(playerStartX, playerStartY);
-
-
-// function checkforEnemies(enemy1, enemy2){
-//     if (enemy1.x < enemy2.x + enemy2.width &&
-//         enemy1.x + enemy1.width > enemy2.x &&
-//         enemy1.y < enemy2.y + enemy2.height &&
-//         enemy1.y + enemy1.height > enemy2.y) {
-//         console.log("Collision with buddy!");
-//             if (enemy1.speed > enemy2.speed){
-//                 enemy2.speed = enemy2.speed + 20;
-//             } else if (enemy1.speed < enemy2.speed){
-//                 enemy1.speed = enemy1.speed + 20;
-//             } else {
-//                 enemy1.speed = enemy2.speed;
-//             }
-//             }
-//     }
-
 
 
 /*Generic functions*/
