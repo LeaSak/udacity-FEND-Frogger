@@ -7,19 +7,44 @@ var game = {
     rightBoundary: 435,
     bottomBoundary: 500,
     inWater: 40,
-    endGame: function() {
-        alert("Game Over! Click OK to restart the game.");
+    totalLevels: 4,
+    maxScore: 120,
+    advanceGame: function() {
+        if (player.score % 30 === 0 &&
+            player.level < game.totalLevels) {
+            player.level += 1;
+            switch (player.level) {
+                case 2:
+                    allEnemies.forEach(function(enemy) {
+                        enemy.speed -= 20;
+                    })
+                    allEnemies.push(enemy3, enemy8);
+                    break;
+                case 3:
+                    allEnemies.forEach(function(enemy) {
+                        enemy.speed -= 20;
+                    })
+                    allEnemies.push(enemy2, enemy4);
+                    break;
+                case 4:
+                    allEnemies.forEach(function(enemy) {
+                        enemy.speed -= 20;
+                    })
+                    allEnemies.push(enemy5, enemy7, enemy10);
+                    break;
+            }
+        }
+    },
+    gameReset: function() {
+        allEnemies.splice(3);
         player.reset();
         allEnemies.forEach(function(enemy) {
             enemy.reset();
         });
     },
-    win: function() {
-        alert("Hooray! You've won the game. Click OK to restart the game.");
-        player.reset();
-        allEnemies.forEach(function(enemy) {
-            enemy.reset();
-        });
+    endGame: function() {
+        alert("Game Over! Click OK to restart the game.");
+        game.gameReset();
     },
     displayGameResults: function() {
         var livesBox = document.getElementById('lives');
@@ -27,11 +52,11 @@ var game = {
         var levelBox = document.getElementById('level');
 
         livesBox.innerHTML = '';
-        livesBox.innerHTML = '<p>Lives: ' + player.lives + '</p>';
+        livesBox.innerHTML = '<p>Lives: ' + player.lives + ' / ' + '3' + '</p>';
         scoreBox.innerHTML = '';
         scoreBox.innerHTML = '<p>Score: ' + player.score + '</p>';
         levelBox.innerHTML = '';
-        levelBox.innerHTML = '<p>Level: ' + player.level + '</p>';
+        levelBox.innerHTML = '<p>Level: ' + player.level + '/ ' + '4' + '</p>';
     }
 }
 
@@ -52,11 +77,10 @@ Drawable.prototype.render = function() {
 }
 
 // Enemies our player must avoid
-//
-var enemyX = [-50, -150, -250, -350, -450];
+var enemyX = [-50, -150, -250, -350, -450, 555, 655, 755, 855, 955];
 var enemyY = [138, 177, 221, 260, 304, 343, 387, 426];
-var enemySpriteLeft = 'images/enemy-bugNTL.png';
-var enemySpriteRight = 'images/enemy-bugNTR.png';
+var spriteArray = ['images/enemy-bugNTL.png', 'images/enemy-bugNTR.png'];
+
 // var row2 = getRowValues(2); //y co-ordinates per row
 // var row3 = getRowValues(3); //y co-ordinates per row
 // var row4 = getRowValues(4); //y co-ordinates per row
@@ -69,6 +93,7 @@ var Enemy = function(x, y, speed, sprite) {
     this.startX = x;
     this.startY = y;
     this.speed = speed;
+    this.initialSpeed = speed;
     this.width = 47;
     this.height = 34;
     // The image/sprite for our enemies, this uses
@@ -85,31 +110,27 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
+
     //Bugs from right
-    //console.log(allEnemies);
-    if (this.sprite === enemySpriteRight) {
+    if (this.sprite === spriteArray[1]) {
         if (this.x < game.leftBoundary) {
             this.x = game.canvasWidth;
         } else {
-            this.x -= this.speed * dt;
+            this.x = this.x - this.speed * dt;
         }
     }
 
     //Bugs from left
-    if (this.sprite === enemySpriteLeft) {
+    if (this.sprite === spriteArray[0]) {
         if (this.x > game.rightBoundary) {
             this.x = 0;
-            // this.reset();
-            //console.log("y ", + this.y);
         } else {
-            // this.y += randomize(-1,1);
             this.x += this.speed * dt;
         }
     }
 
     //makes bugs jitter vertically
-    this.y = this.startY + randomize(-0.6, 0.6);
-    // this.scanForFriends();
+    this.y = this.startY + randomize(-0.5, 0.5);
     this.checkCollision();
 };
 
@@ -119,51 +140,44 @@ Enemy.prototype.checkCollision = function() {
         player.x + player.width > this.x &&
         player.y < this.y + this.height &&
         player.y + player.height > this.y) {
+        player.death = true;
         console.log("Collision!");
         player.lives -= 1;
-        player.x = playerStartX;
-        player.y = playerStartY;
+        player.goHome();
 
         //player life
         if (player.lives === 0) {
+            player.gameOver = true;
             game.endGame();
         }
     }
 
     //check for collision with other enemies
-    for (var i = 0; i < allEnemies.length; i++){
+    //only needed if speed varies between enemies with same y value.
+    for (var i = 0; i < allEnemies.length; i++) {
         var other = allEnemies[i];
         var that = this;
         if (other != this &&
             this.x < other.x + other.width &&
-        this.x + this.width > other.x &&
-        this.y < other.y + other.height &&
-        this.y + this.height > other.y
-            ) {
+            this.x + this.width > other.x &&
+            this.y < other.y + other.height &&
+            this.y + this.height > other.y
+        ) {
             //finds slower friend
             // store collision speed of faster enemy
             var tmpSpeed = this.speed;
-            // accelerate slower enemy
+            // swap speeds
             this.speed = other.speed;
-            // decelerate faster enemy
             other.speed = tmpSpeed;
-            console.log("This bug is now travelling @ " + this.speed);
-            console.log("this bug is now travelling @ " + other.speed);
+            //push slower enemy forward, faster enemy back
+            if (this.sprite === spriteArray[1]) {
+                this.x = this.x + 15;
+                other.x = other.x - 15;
+            } else {
+                this.x = this.x - 15;
+                other.x = other.x + 15;
+            }
         }
-    }
-
-}
-
-
-Enemy.prototype.goFaster = function() {
-    if (player.level === 2) {
-        this.speed += 20;
-    }
-    if (player.level === 3) {
-        this.speed += 30;
-    }
-    if (player.level === 4) {
-        this.speed += 40;
     }
 
 }
@@ -171,7 +185,8 @@ Enemy.prototype.goFaster = function() {
 Enemy.prototype.reset = function() {
     //this.x = initial x argument;
     this.x = this.startX;
-    console.log(this.x);
+    //restore speed
+    this.speed = this.initialSpeed;
 }
 
 
@@ -192,6 +207,10 @@ var Player = function(x, y) {
     this.score = 0;
     this.lives = 3;
     this.level = 1;
+    this.gameOver = false;
+    this.gameWon = false;
+    this.success = false;
+    this.death = false;
 }
 
 Player.prototype = Object.create(Drawable.prototype);
@@ -243,54 +262,83 @@ Player.prototype.checkBoundaries = function() {
     //if player reaches the water,
     // push player back to playerStartX, playerStartY position
     if (this.y <= game.inWater) {
-        this.x = playerStartX;
-        this.y = playerStartY;
+        this.goHome();
     }
 }
 
 Player.prototype.getScore = function() {
     //if player reaches the water,
     //add 10 points
-    if (this.y <= game.inWater) {
+    if (this.y <= game.inWater &&
+        this.level <= game.totalLevels) {
+        this.success = true;
         this.score += 10;
+        game.advanceGame();
+    }
+    this.won();
+}
 
-
-        if (this.score % 30 === 0) {
-            this.level += 1;
-            //update enemy speed
-            allEnemies.forEach(function(enemy) {
-                enemy.goFaster();
-            });
-        }
-
-        if (player.level === 5) {
-            game.win();
-        }
-
+Player.prototype.won = function() {
+    if (this.level === game.totalLevels &&
+        this.score === game.maxScore) {
+        this.gameWon = true;
+        alert("Hooray! You've won the game. Click OK to restart the game.");
+        game.gameReset();
     }
 }
 
 Player.prototype.reset = function() {
-    this.x = playerStartX;
-    this.y = playerStartY;
+    this.goHome();
     this.score = 0;
     this.level = 1;
     this.lives = 3;
+    this.gameOver = false;
+    this.gameWon = false;
+    this.success = false;
+    this.death = false;
+}
+
+Player.prototype.goHome = function(){
+    this.x = playerStartX;
+    this.y = playerStartY;
 }
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
+//level 4 speed range: 40 - 60
+//level 3 speed range: 60 - 80
+//level 2 speed range: 80 - 100
+//level 1 speed range: 100 - 120
 
-var enemy1 = new Enemy(enemyX[0], enemyY[0], 40, enemySpriteLeft);
-var enemy2 = new Enemy(enemyX[1], enemyY[1], 40, enemySpriteRight);
-var enemy3 = new Enemy(enemyX[2], enemyY[2], 60, enemySpriteRight);
-var enemy4 = new Enemy(enemyX[3], enemyY[3], 60, enemySpriteLeft);
-var enemy5 = new Enemy(enemyX[2], enemyY[3], 80, enemySpriteLeft);
-var allEnemies = [enemy1, enemy2, enemy3, enemy4, enemy5];
+////row 1: slow
+var enemy1 = new Enemy(enemyX[0], enemyY[0], 100, spriteArray[0]);
+var enemy2 = new Enemy(enemyX[2], enemyY[0], 60, spriteArray[0]);
+////row 2: medium
+var enemy3 = new Enemy(enemyX[5], enemyY[1], 90, spriteArray[1]);
+////row 3: fast
+var enemy4 = new Enemy(enemyX[6], enemyY[2], 80, spriteArray[1]);
+var enemy5 = new Enemy(enemyX[8], enemyY[2], 60, spriteArray[1]);
+////row 4: medium
+var enemy6 = new Enemy(enemyX[1], enemyY[3], 110, spriteArray[0]);
+var enemy7 = new Enemy(enemyX[3], enemyY[3], 50, spriteArray[0]);
+////row 5: slow
+var enemy8 = new Enemy(enemyX[7], enemyY[4], 80, spriteArray[1]);
+////row 6: medium
+var enemy9 = new Enemy(enemyX[2], enemyY[5], 110, spriteArray[0]);
+var enemy10 = new Enemy(enemyX[4], enemyY[5], 50, spriteArray[0]);
+
+//level 1
+var allEnemies = [enemy1, enemy6, enemy9];
+//level 2
+// var allEnemies = [enemy1, enemy6, enemy9, enemy3, enemy8];
+// //level 3
+// var allEnemies = [enemy1, enemy6, enemy9, enemy3, enemy8, enemy2, enemy4];
+// //level 4
+// var allEnemies = [enemy1, enemy6, enemy9, enemy3, enemy8, enemy2, enemy4, enemy5, enemy7, enemy10];
+
 var player = new Player(playerStartX, playerStartY);
-
 
 /*Generic functions*/
 //draw a box around the objects
@@ -307,6 +355,10 @@ function drawBox(x, y, width, height, color) {
 function randomize(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+// function randomArray(myArray){
+//     return myArray[Math.floor(Math.random() * myArray.length)];
+// }
 
 //use this function to calculate y values per row for enemy movement
 // function getRowValues(row) {
