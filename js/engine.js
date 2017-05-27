@@ -62,16 +62,16 @@ var Engine = (function(global) {
         win.requestAnimationFrame(main);
 
         //stop animation if game lost
-        // if (player.lose) {
-        //     //win.cancelAnimationFrame(main);
-        //     game.endGame();
-        // }
+        if (player.lose) {
+            //win.cancelAnimationFrame(main);
+            game.endGame();
+        }
 
-        // if (player.win) {
-        //     // player.won();
-        //     alert("Hooray! You've won the game. Click OK to restart the game.");
-        //     game.gameReset();
-        // }
+        if (player.win) {
+            // player.won();
+            alert("Hooray! You've won the game. Click OK to restart the game.");
+            game.gameReset();
+        }
     }
 
     /* This function does some initial setup that should only occur once,

@@ -18,24 +18,24 @@ var game = {
             player.level += 1;
             switch (player.level) {
                 case 2:
+                    allEnemies.push(enemy3, enemy8);
                     allEnemies.forEach(function(enemy) {
                         console.log(enemy.speed);
                         enemy.speed -= 20;
                         console.log(enemy.speed);
                     })
-                    allEnemies.push(enemy3, enemy8);
                     break;
                 case 3:
+                    allEnemies.push(enemy2, enemy4);
                     allEnemies.forEach(function(enemy) {
                         enemy.speed -= 20;
                     })
-                    allEnemies.push(enemy2, enemy4);
                     break;
                 case 4:
+                    allEnemies.push(enemy5, enemy7, enemy10);
                     allEnemies.forEach(function(enemy) {
                         enemy.speed -= 20;
                     })
-                    allEnemies.push(enemy5, enemy7, enemy10);
                     break;
             }
         }
@@ -100,7 +100,7 @@ var Enemy = function(x, y, speed) {
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     // set sprite image according to y value
-    // this.sprite = 'images/enemy-bugNTL.png';
+    this.sprite = 'images/enemy-bugNTL.png';
     //this.chooseSprite();
     this.width = 47;
     this.height = 34;
@@ -178,37 +178,18 @@ Enemy.prototype.findFriends = function(){
             // swap speeds
             this.speed = other.speed;
             other.speed = tmpSpeed;
-            this.x = this.x - 50;
-            other.x = other.x + 50;
             if (this.sprite === enemySpriteArray[1]) {
-                this.x = this.x + 50;
-                other.x = other.x - 50;
+                this.x = this.x + 17;
+                other.x = other.x - 17;
             } else if (this.sprite === enemySpriteArray[0]){
-                this.x = this.x - 50;
-                other.x = other.x + 50;
+                this.x = this.x - 17;
+                other.x = other.x + 17;
             }
         }
 
     }
 
 }
-
-Enemy.prototype.chooseSprite = function(){
-    switch (this.startY) {
-        case enemyY[0]:
-        case enemyY[3]:
-        case enemyY[5]:
-        this.sprite = enemySpriteArray[0];
-        break;
-        case enemyY[1]:
-        case enemyY[2]:
-        case enemyY[4]:
-        this.sprite = enemySpriteArray[1];
-        break;
-    }
-
-}
-
 
 Enemy.prototype.reset = function() {
     //this.x = initial x argument;
