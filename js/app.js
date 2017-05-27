@@ -100,7 +100,8 @@ var Enemy = function(x, y, speed) {
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     // set sprite image according to y value
-    this.chooseSprite();
+    // this.sprite = 'images/enemy-bugNTL.png';
+    //this.chooseSprite();
     this.width = 47;
     this.height = 34;
 }
@@ -114,17 +115,18 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-    //Bugs from right
-    if (this.sprite === enemySpriteArray[1]) {
+   //Bugs from right
+    if (this.startY === enemyY[1] || this.startY === enemyY[2] || this.startY === enemyY[4]) {
+        this.sprite = enemySpriteArray[1];
         if (this.x < game.leftBoundary) {
             this.x = game.canvasWidth; //push bugs back to right
         } else {
             this.x -= this.speed * dt;
         }
     }
-
     //Bugs from left
-    if (this.sprite === enemySpriteArray[0]) {
+    if (this.startY === enemyY[0] || this.startY === enemyY[3] || this.startY === enemyY[5]) {
+        this.sprite = enemySpriteArray[0];
         if (this.x > game.rightBoundary) {
             this.x = 0; //push bugs back to left
         } else {
@@ -176,12 +178,14 @@ Enemy.prototype.findFriends = function(){
             // swap speeds
             this.speed = other.speed;
             other.speed = tmpSpeed;
+            this.x = this.x - 50;
+            other.x = other.x + 50;
             if (this.sprite === enemySpriteArray[1]) {
-                this.x = this.x + 25;
-                other.x = other.x - 25;
+                this.x = this.x + 50;
+                other.x = other.x - 50;
             } else if (this.sprite === enemySpriteArray[0]){
-                this.x = this.x - 25;
-                other.x = other.x + 25;
+                this.x = this.x - 50;
+                other.x = other.x + 50;
             }
         }
 
@@ -190,7 +194,7 @@ Enemy.prototype.findFriends = function(){
 }
 
 Enemy.prototype.chooseSprite = function(){
-    switch (this.y) {
+    switch (this.startY) {
         case enemyY[0]:
         case enemyY[3]:
         case enemyY[5]:
@@ -205,11 +209,12 @@ Enemy.prototype.chooseSprite = function(){
 
 }
 
+
 Enemy.prototype.reset = function() {
     //this.x = initial x argument;
     this.x = this.startX;
     //randomize y values again
-    this.y = this.startY;
+    this.startY = randomArray(enemyY);
     //TODO: restore initial speed;
     this.speed = this.initialSpeed;
 
@@ -248,19 +253,19 @@ Player.prototype.update = function(dt) {
 Player.prototype.handleInput = function(keyCode) {
     switch (keyCode) {
         case 'left':
-            this.x -= 30;
+            this.x -= 50;
             //console.log(this.x);
             break;
         case 'right':
-            this.x += 30;
+            this.x += 50;
             //console.log(this.x);
             break;
         case 'down':
-            this.y += 30;
+            this.y += 42;
             //console.log(this.y);
             break;
         case 'up':
-            this.y -= 30;
+            this.y -= 42;
             //console.log(this.y);
             break;
     }
@@ -332,23 +337,58 @@ Player.prototype.goHome = function() {
 //level 2 speed range: 80 - 100
 //level 1 speed range: 100 - 120
 
+// // ////row 1: slow
+// var enemy1 = new Enemy(enemyX[0], randomArray(enemyY), 100);
+// var enemy2 = new Enemy(enemyX[2], randomArray(enemyY), 60);
+// ////row 2: medium
+// var enemy3 = new Enemy(enemyX[5], randomArray(enemyY), 90);
+// ////row 3: fast
+// var enemy4 = new Enemy(enemyX[6], randomArray(enemyY), 80);
+// var enemy5 = new Enemy(enemyX[8], randomArray(enemyY), 60);
+// ////row 4: medium
+// var enemy6 = new Enemy(enemyX[1], randomArray(enemyY), 110);
+// var enemy7 = new Enemy(enemyX[3], randomArray(enemyY), 50);
+// ////row 5: slow
+// var enemy8 = new Enemy(enemyX[7], randomArray(enemyY), 80);
+// ////row 6: medium
+// var enemy9 = new Enemy(enemyX[2], randomArray(enemyY), 110);
+// var enemy10 = new Enemy(enemyX[4], randomArray(enemyY), 50);
+// var enemy11 = new Enemy(enemyX[2], randomArray(enemyY), 140);
+
+// var enemyY_LTR = [138, 260, 343];
+// var enemyY_RTL = [177, 221, 304];
+
 // ////row 1: slow
-var enemy1 = new Enemy(enemyX[0], randomArray(enemyY), 100);
-var enemy2 = new Enemy(enemyX[2], randomArray(enemyY), 60);
+// var allEnemies = [];
+// var totalEnemies = 3;
+
+// for (var i = 0; i < totalEnemies.length; i++ ) {
+//     var x = 0;
+//     var y = randomArray(enemyY);
+//     var speed = randomize(100, 120);
+//     var enemy = new Enemy(x, y, speed);
+//     allEnemies.push(enemy);
+//     console.log(allEnemies);
+
+// }
+
+
+var enemy1 = new Enemy(0, randomArray(enemyY), randomize(100, 120));
+var enemy2 = new Enemy(0, randomArray(enemyY), randomize(100, 120));
 ////row 2: medium
-var enemy3 = new Enemy(enemyX[5], randomArray(enemyY), 90);
+var enemy3 = new Enemy(0, randomArray(enemyY), randomize(100, 120));
 ////row 3: fast
-var enemy4 = new Enemy(enemyX[6], randomArray(enemyY), 80);
-var enemy5 = new Enemy(enemyX[8], randomArray(enemyY), 60);
+var enemy4 = new Enemy(0, randomArray(enemyY), randomize(100, 120));
+var enemy5 = new Enemy(0, randomArray(enemyY), randomize(100, 120));
 ////row 4: medium
-var enemy6 = new Enemy(enemyX[1], randomArray(enemyY), 110);
-var enemy7 = new Enemy(enemyX[3], randomArray(enemyY), 50);
+var enemy6 = new Enemy(0, randomArray(enemyY), randomize(100, 120));
+var enemy7 = new Enemy(0, randomArray(enemyY), randomize(100, 120));
 ////row 5: slow
-var enemy8 = new Enemy(enemyX[7], randomArray(enemyY), 80);
+var enemy8 = new Enemy(0, randomArray(enemyY), randomize(100, 120));
 ////row 6: medium
-var enemy9 = new Enemy(enemyX[2], randomArray(enemyY), 110);
-var enemy10 = new Enemy(enemyX[4], randomArray(enemyY), 50);
-var enemy11 = new Enemy(enemyX[2], randomArray(enemyY), 140);
+var enemy9 = new Enemy(0, randomArray(enemyY), randomize(100, 120));
+var enemy10 = new Enemy(0, randomArray(enemyY), randomize(100, 120));
+var enemy11 = new Enemy(0, randomArray(enemyY), randomize(100, 120));
 
 //level 1
 var allEnemies = [enemy1, enemy6, enemy9];

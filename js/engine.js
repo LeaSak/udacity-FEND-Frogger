@@ -62,16 +62,16 @@ var Engine = (function(global) {
         win.requestAnimationFrame(main);
 
         //stop animation if game lost
-        if (player.lose) {
-            //win.cancelAnimationFrame(main);
-            game.endGame();
-        }
+        // if (player.lose) {
+        //     //win.cancelAnimationFrame(main);
+        //     game.endGame();
+        // }
 
-        if (player.win) {
-            // player.won();
-            alert("Hooray! You've won the game. Click OK to restart the game.");
-            game.gameReset();
-        }
+        // if (player.win) {
+        //     // player.won();
+        //     alert("Hooray! You've won the game. Click OK to restart the game.");
+        //     game.gameReset();
+        // }
     }
 
     /* This function does some initial setup that should only occur once,
@@ -153,7 +153,7 @@ var Engine = (function(global) {
                      * so that we get the benefits of caching these images, since
                      * we're using them over and over.
                      */
-                    ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
+                    ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 84);
                 }
             }
             renderEntities();
