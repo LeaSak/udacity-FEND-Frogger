@@ -25,8 +25,8 @@ var Engine = (function(global) {
         ctx = canvas.getContext('2d'),
         lastTime;
 
-    canvas.width = 505;
-    canvas.height = 606;
+    canvas.width = 500;
+    canvas.height = 600;
     doc.body.appendChild(canvas);
     //append canvas to wrapper div
     //doc.getElementById('canvas-container').appendChild(canvas);
@@ -126,7 +126,7 @@ var Engine = (function(global) {
          */
         //just to see dimensions of canvas, remove before submission
         if (game.play) {
-            ctx.fillStyle = "#FFFF00"; // Yellow
+            ctx.fillStyle = "#000"; // Yellow
             ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
             var rowImages = [
                     'images/water-block.png', // Top row is water
@@ -153,11 +153,14 @@ var Engine = (function(global) {
                      * so that we get the benefits of caching these images, since
                      * we're using them over and over.
                      */
-                    ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 84);
+                    ctx.drawImage(Resources.get(rowImages[row]), col * 100, row * 84);
                 }
             }
             renderEntities();
             game.displayGameResults();
+            allHearts.forEach(function(heart) {
+            heart.render();
+        });
             //game.displayMessage();
         } else {
             welcomeScreen();
@@ -177,6 +180,7 @@ var Engine = (function(global) {
         });
 
         player.render();
+
     }
 
     /* This function does nothing but it could have been a good place to
@@ -198,6 +202,7 @@ var Engine = (function(global) {
         'images/grass-block.png',
         'images/enemy-bugNTL.png',
         'images/enemy-bugNTR.png',
+        'images/HeartNT.png',
         'images/char-boyNT.png'
     ]);
     Resources.onReady(init);
