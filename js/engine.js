@@ -64,11 +64,11 @@ var Engine = (function(global) {
 
         //stop animation if game lost
         if (player.lose) {
-            gameOverScreen();
+            game.gameOverScreen();
         }
         //stop animation if game won
         if (player.win) {
-            wonGameMessage();
+            game.wonGameMessage();
         }
     }
 
@@ -165,7 +165,7 @@ var Engine = (function(global) {
         // }
         else {
 
-            welcomeScreen();
+            game.welcomeScreen();
         }
     }
 

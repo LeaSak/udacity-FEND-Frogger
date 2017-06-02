@@ -56,6 +56,48 @@ var game = {
         scoreBox.innerHTML = '<p>Score: ' + player.score + '</p>';
         levelBox.innerHTML = '';
         levelBox.innerHTML = '<p>Level: ' + player.level + ' / ' + game.totalLevels + '</p>';
+    },
+    welcomeScreen: function(keyCode) {
+        if (game.play !== true &&
+            player.lose !== true &&
+            player.win !== true) {
+            document.getElementById('welcome').style.display = 'flex';
+        }
+
+        if (keyCode === 'enter') {
+            game.play = true;
+            document.getElementById('welcome').style.display = 'none';
+        }
+    },
+    gameOverScreen: function(keyCode) {
+        var messageBox = document.getElementById('message');
+        if (player.lose) {
+            game.play = false;
+            messageBox.style.display = 'block';
+            messageBox.innerHTML = '';
+            messageBox.innerHTML = '<p>Goodbye for now. <br> Press the spacebar to play again.</p>';
+        }
+
+        if (keyCode === 'space') {
+            game.play = true;
+            document.getElementById('message').style.display = 'none';
+            game.gameReset();
+        }
+    },
+    wonGameMessage: function(keyCode) {
+        var messageBox = document.getElementById('message');
+        if (player.win) {
+            game.play = false;
+            messageBox.style.display = 'block';
+            messageBox.innerHTML = '';
+            messageBox.innerHTML = '<p>You won! <br> Press the spacebar to play again.</p>';
+        }
+
+        if (keyCode === 'space') {
+            game.play = true;
+            document.getElementById('message').style.display = 'none';
+            game.gameReset();
+        }
     }
 }
 
@@ -71,13 +113,12 @@ var Drawable = function(x, y, sprite, height, width) {
 }
 
 Drawable.prototype.render = function() {
-    //drawBox(this.x, this.y, this.width, this.height, "red");
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y, this.width, this.height);
 
 }
 
 // Enemies our player must avoid
-var enemyX = [-5, -55, -105, 505, 555, 605];
+var enemyX = [-205, -155, -105, -55, -5, 505, 555, 605, 655, 705];
 var enemyY = [139, 183, 223, 267, 307, 351];
 var enemySpriteArray = ['images/enemy-bugNTL.png', 'images/enemy-bugNTR.png'];
 
@@ -125,6 +166,7 @@ Enemy.prototype.update = function(dt) {
 };
 
 // Collision between enemy and player
+//https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
 Enemy.prototype.checkCollision = function() {
     if (player.x < this.x + this.width &&
         player.x + player.width > this.x &&
@@ -135,8 +177,10 @@ Enemy.prototype.checkCollision = function() {
         allHearts.pop();
         player.goHome();
         //player life
-        if (player.lives === 0 && allHearts.length === 0) {
+        if (player.lives === 0
+            && allHearts.length === 0) {
             player.lose = true;
+            game.play = false;
         }
     }
 
@@ -270,7 +314,6 @@ Heart.prototype.constructor = Heart;
 //level 3 speed range: 60 - 80
 //level 2 speed range: 80 - 100
 //level 1 speed range: 100 - 120
-var enemyX = [-205, -155, -105, -55, -5, 505, 555, 605, 655, 705];
 ////row 1: slow, LTR
 var enemy1 = new Enemy(enemyX[4], enemyY[0], 100, enemySpriteArray[0]);
 var enemy2 = new Enemy(enemyX[2], enemyY[0], 40, enemySpriteArray[0]);
@@ -298,74 +341,8 @@ var player = new Player(playerStartX, playerStartY);
 
 //Level 1
 var allEnemies = [enemy1, enemy6, enemy9, enemy11];
-// // //Level 2
-// var allEnemies = [enemy1, enemy6, enemy9, enemy11, enemy4, enemy12];
-// // //Level 3
-// var allEnemies = [enemy1, enemy6, enemy9, enemy11, enemy4, enemy12, enemy3, enemy7, enemy10];
-// // //Levels - 4
-// var allEnemies = [enemy1, enemy6, enemy9, enemy11, enemy4, enemy12, enemy3, enemy7, enemy10, enemy2, enemy5, enemy8];
 
 /*Generic functions*/
-
-function welcomeScreen(keyCode) {
-    if(game.play !== true && player.lose !== true && player.win !== true){
-        document.getElementById('welcome').style.display = 'flex';
-    }
-
-    if (keyCode === 'enter') {
-        game.play = true;
-        document.getElementById('welcome').style.display = 'none';
-    }
-
-}
-
-function gameOverScreen(keyCode) {
-    // if (player.lose){
-    //     game.play = false;
-    //     document.getElementById('goodbye').style.display = 'block';
-    // }
-
-    var messageBox = document.getElementById('message');
-    if(player.lose){
-        game.play = false;
-        messageBox.style.display = 'block';
-        messageBox.innerHTML = '';
-        messageBox.innerHTML = '<p>Goodbye for now. <br> Press the spacebar to play again.</p>';
-    }
-
-    if (keyCode === 'space') {
-        game.play = true;
-        document.getElementById('message').style.display = 'none';
-        game.gameReset();
-    }
-}
-
-function wonGameMessage(keyCode){
-    var messageBox = document.getElementById('message');
-    if(player.win){
-        game.play = false;
-        messageBox.style.display = 'block';
-        messageBox.innerHTML = '';
-        messageBox.innerHTML = '<p>You won! <br> Press the spacebar to play again.</p>';
-    }
-
-    if (keyCode === 'space') {
-        game.play = true;
-        document.getElementById('message').style.display = 'none';
-        game.gameReset();
-    }
-
-}
-
-//draw a box around the objects
-//From Karol in Udacity Forum
-function drawBox(x, y, width, height, color) {
-    ctx.beginPath();
-    ctx.rect(x, y, width, height);
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = color;
-    ctx.stroke();
-}
 
 //returns a random integer between min and max, inclusive.
 //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
@@ -373,10 +350,6 @@ function randomize(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function randomArray(myArray) {
-    return myArray[Math.floor(Math.random() * myArray.length)];
 }
 
 // This listens for key presses and sends the keys to your
@@ -391,10 +364,9 @@ document.addEventListener('keydown', function(e) {
         39: 'right',
         40: 'down'
     };
-
+    //e.preventDefault();//prevent keys from scolling during play
     player.handleInput(allowedKeys[e.keyCode]);
-    welcomeScreen(allowedKeys[e.keyCode]);
-    gameOverScreen(allowedKeys[e.keyCode]);
-    wonGameMessage(allowedKeys[e.keyCode]);
+    game.welcomeScreen(allowedKeys[e.keyCode]);
+    game.gameOverScreen(allowedKeys[e.keyCode]);
+    game.wonGameMessage(allowedKeys[e.keyCode]);
 });
-
