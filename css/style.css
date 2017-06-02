@@ -2,22 +2,74 @@
     border: 1px solid blue;
 }*/
 
-body {
-    text-align: center;
+html, body {
+    height: 100%;
+    width: 100%;
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
 }
 
-#message-board {
-    width: 505px;
+body {
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    font-family: 'Space Mono', monospace;
+}
+
+
+.welcome {
+  height: 700px;
+  width: 500px;
+  overflow: auto;
+  background-color: black;
+  margin: auto;
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: auto;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.welcome-text {
+    color: #536DFE;
+}
+
+.title {
+    font-size: 60px;
+}
+
+.action {
+    color: #CFD8DC;
+    font-weight: 400;
+}
+
+.instructions {
+  color: #536DFE;
+}
+.container{
+    position: relative;
+    margin-top: 100px;
+}
+.scoreboard {
+    width: 500px;
     margin: 0 auto;
     display: flex;
 }
 
-#score,
-#lives,
-#level {
+.data {
     width: 33.33%;
-    padding: 15px;
+    padding: 10px;
+    margin-right: 10px;
+    border: 2px solid #CFD8DC;
+}
+
+.level{
+    margin-right: 0;
+}
+
+#message {
+    display: none;
 }

@@ -8,8 +8,8 @@ var game = {
     rightBoundary: 435,
     bottomBoundary: 500,
     inWater: 40,
-    totalLevels: 4,
-    maxScore: 120,
+    totalLevels: 2,
+    maxScore: 60,
     maxLives: 3,
     advanceGame: function() {
         if (player.score % 30 === 0 &&
@@ -45,10 +45,6 @@ var game = {
         });
         allHearts.push(heart1, heart2, heart3);
     },
-    endGame: function(keyCode) {
-        alert("Game Over! Click OK to restart the game.");
-        game.gameReset();
-    },
     displayGameResults: function() {
         var livesBox = document.getElementById('lives');
         var scoreBox = document.getElementById('score');
@@ -59,7 +55,7 @@ var game = {
         scoreBox.innerHTML = '';
         scoreBox.innerHTML = '<p>Score: ' + player.score + '</p>';
         levelBox.innerHTML = '';
-        levelBox.innerHTML = '<p>Level: ' + player.level + '/ ' + game.totalLevels + '</p>';
+        levelBox.innerHTML = '<p>Level: ' + player.level + ' / ' + game.totalLevels + '</p>';
     }
 }
 
@@ -74,9 +70,9 @@ var Drawable = function(x, y, sprite, height, width) {
 
 }
 
-Drawable.prototype.render = function(){
-        drawBox(this.x, this.y, this.width, this.height, "red");
-        ctx.drawImage(Resources.get(this.sprite), this.x, this.y, this.width, this.height);
+Drawable.prototype.render = function() {
+    //drawBox(this.x, this.y, this.width, this.height, "red");
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y, this.width, this.height);
 
 }
 
@@ -114,7 +110,7 @@ Enemy.prototype.update = function(dt) {
         }
     }
 
-   // Move bugs from right
+    // Move bugs from right
     if (this.sprite === enemySpriteArray[1]) {
         if (this.x < game.leftBoundary) {
             this.x = game.canvasWidth;
@@ -256,7 +252,7 @@ Player.prototype.goHome = function() {
     this.y = playerStartY;
 }
 
-var Heart = function(x,y){
+var Heart = function(x, y) {
     Drawable.call(this, x, y);
     this.sprite = 'images/HeartNT.png';
     this.width = 38;
@@ -294,7 +290,7 @@ var enemy11 = new Enemy(enemyX[7], enemyY[4], 100, enemySpriteArray[1]);
 // ////row 6: medium, LTR
 var enemy12 = new Enemy(enemyX[1], enemyY[5], 90, enemySpriteArray[0]);
 
-var heart1 = new Heart(10,550);
+var heart1 = new Heart(10, 550);
 var heart2 = new Heart(58, 550);
 var heart3 = new Heart(108, 550);
 var allHearts = [heart1, heart2, heart3];
@@ -312,15 +308,53 @@ var allEnemies = [enemy1, enemy6, enemy9, enemy11];
 /*Generic functions*/
 
 function welcomeScreen(keyCode) {
-    ctx.fillStyle = '#000000';
-    ctx.fillRect(0, 0, game.canvasWidth, game.canvasHeight);
-    ctx.fillStyle = '#fff';
-    ctx.font = '20px Arial';
-    ctx.fillText('Press enter to play', 20, 50);
+    if(game.play !== true && player.lose !== true && player.win !== true){
+        document.getElementById('welcome').style.display = 'flex';
+    }
 
     if (keyCode === 'enter') {
         game.play = true;
+        document.getElementById('welcome').style.display = 'none';
     }
+
+}
+
+function gameOverScreen(keyCode) {
+    // if (player.lose){
+    //     game.play = false;
+    //     document.getElementById('goodbye').style.display = 'block';
+    // }
+
+    var messageBox = document.getElementById('message');
+    if(player.lose){
+        game.play = false;
+        messageBox.style.display = 'block';
+        messageBox.innerHTML = '';
+        messageBox.innerHTML = '<p>Goodbye for now. <br> Press the spacebar to play again.</p>';
+    }
+
+    if (keyCode === 'space') {
+        game.play = true;
+        document.getElementById('message').style.display = 'none';
+        game.gameReset();
+    }
+}
+
+function wonGameMessage(keyCode){
+    var messageBox = document.getElementById('message');
+    if(player.win){
+        game.play = false;
+        messageBox.style.display = 'block';
+        messageBox.innerHTML = '';
+        messageBox.innerHTML = '<p>You won! <br> Press the spacebar to play again.</p>';
+    }
+
+    if (keyCode === 'space') {
+        game.play = true;
+        document.getElementById('message').style.display = 'none';
+        game.gameReset();
+    }
+
 }
 
 //draw a box around the objects
@@ -341,7 +375,7 @@ function randomize(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function randomArray(myArray){
+function randomArray(myArray) {
     return myArray[Math.floor(Math.random() * myArray.length)];
 }
 
@@ -350,6 +384,7 @@ function randomArray(myArray){
 //change from keyup to keydown so that when user holds key down its smoother.
 document.addEventListener('keydown', function(e) {
     var allowedKeys = {
+        32: 'space',
         13: 'enter',
         37: 'left',
         38: 'up',
@@ -359,4 +394,7 @@ document.addEventListener('keydown', function(e) {
 
     player.handleInput(allowedKeys[e.keyCode]);
     welcomeScreen(allowedKeys[e.keyCode]);
+    gameOverScreen(allowedKeys[e.keyCode]);
+    wonGameMessage(allowedKeys[e.keyCode]);
 });
+

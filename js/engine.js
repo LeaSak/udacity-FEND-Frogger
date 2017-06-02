@@ -23,13 +23,14 @@ var Engine = (function(global) {
         win = global.window,
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
+        gamebox = doc.getElementById("gamebox"),
         lastTime;
 
     canvas.width = 500;
     canvas.height = 600;
-    doc.body.appendChild(canvas);
-    //append canvas to wrapper div
-    //doc.getElementById('canvas-container').appendChild(canvas);
+    // doc.body.appendChild(canvas);
+    //append canvas to container div
+    gamebox.appendChild(canvas);
 
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
@@ -63,14 +64,11 @@ var Engine = (function(global) {
 
         //stop animation if game lost
         if (player.lose) {
-            //win.cancelAnimationFrame(main);
-            game.endGame();
+            gameOverScreen();
         }
-
+        //stop animation if game won
         if (player.win) {
-            // player.won();
-            alert("Hooray! You've won the game. Click OK to restart the game.");
-            game.gameReset();
+            wonGameMessage();
         }
     }
 
@@ -126,7 +124,7 @@ var Engine = (function(global) {
          */
         //just to see dimensions of canvas, remove before submission
         if (game.play) {
-            ctx.fillStyle = "#000"; // Yellow
+            ctx.fillStyle = "#fff"; // Yellow
             ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
             var rowImages = [
                     'images/water-block.png', // Top row is water
@@ -161,8 +159,12 @@ var Engine = (function(global) {
             allHearts.forEach(function(heart) {
             heart.render();
         });
-            //game.displayMessage();
-        } else {
+        }
+        // else if (player.lose === true){
+        //     gameOverScreen();
+        // }
+        else {
+
             welcomeScreen();
         }
     }

@@ -1,19 +1,35 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>Effective JavaScript: Frogger</title>
+    <link href="https://fonts.googleapis.com/css?family=Space+Mono:400,700" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
-    <h1>Frogger</h1>
-    <div id="message-board">
-        <div id="score"></div>
-        <div id="lives"></div>
-        <div id="level"></div>
+    <div id="welcome" class="welcome">
+        <div class="welcome-text">
+            <h1 class="title">Frogger</h1>
+            <h2 class="action">Press Enter to Play</h2>
+            <p class="instructions">Get to the water</p>
+            <p class="instructions">Watch for lady bugs!</p>
+            <p class="instructions">Use your arrow keys</p>
+        </div>
+    </div>
+    <div class="container" id="gamebox">
+        <div id="scoreboard" class="scoreboard">
+            <div id="score" class="data"></div>
+            <div id="lives" class="data"></div>
+            <div id="level" class="data level"></div>
+        </div>
+    </div>
+    <div id="message">
     </div>
     <script src="js/resources.js"></script>
     <script src="js/app.js"></script>
     <script src="js/engine.js"></script>
 </body>
+
 </html>
