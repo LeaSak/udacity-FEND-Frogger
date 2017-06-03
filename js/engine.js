@@ -28,7 +28,6 @@ var Engine = (function(global) {
 
     canvas.width = game.CANVAS_WIDTH;
     canvas.height = game.CANVAS_HEIGHT;
-    // doc.body.appendChild(canvas);
     //append canvas to container div
     gamebox.appendChild(canvas);
 
@@ -122,10 +121,7 @@ var Engine = (function(global) {
         /* This array holds the relative URL to the image used
          * for that particular row of the game level.
          */
-        //just to see dimensions of canvas, remove before submission
         if (game.play) {
-            ctx.fillStyle = "#fff"; // Yellow
-            ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
             var rowImages = [
                     'images/water-block.png', // Top row is water
                     'images/stone-block.png', // Row 1 of 3 of stone
@@ -155,17 +151,14 @@ var Engine = (function(global) {
                 }
             }
             renderEntities();
-            game.displayGameResults();
+            game.displayGameResults(); // show and update scoreboard
             allHearts.forEach(function(heart) {
-            heart.render();
+            heart.render(); // display hearts
         });
         }
-        // else if (player.lose === true){
-        //     gameOverScreen();
-        // }
         else {
 
-            game.welcomeScreen();
+            game.welcomeScreen(); // show welcome screen
         }
     }
 

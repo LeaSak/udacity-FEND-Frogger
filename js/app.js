@@ -1,3 +1,6 @@
+/* The game object stores all game related
+ * attributes and methods
+ */
 var game = {
     play: false,
     CANVAS_WIDTH: 500,
@@ -11,32 +14,42 @@ var game = {
     TOTAL_LEVELS: 4,
     MAX_SCORE: 120,
     MAX_LIVES: 3,
+    /* Go up a level every 30 points till max-level
+     * Increase game difficulty by adding enemies
+     * Decrease speed of all enemies with each level
+     */
     advanceGame: function() {
         if (player.score % 30 === 0 &&
-            player.level < game.TOTAL_LEVELS) {
+            player.level < game.TOTAL_LEVELS &&
+            player.lives >= 1) {
             player.level += 1;
             switch (player.level) {
                 case 2:
                     allEnemies.forEach(function(enemy) {
                         enemy.speed -= 20;
-                    })
+                    });
                     allEnemies.push(enemy4, enemy12);
                     break;
                 case 3:
                     allEnemies.forEach(function(enemy) {
                         enemy.speed -= 20;
-                    })
+                    });
                     allEnemies.push(enemy3, enemy7, enemy10);
                     break;
                 case 4:
                     allEnemies.forEach(function(enemy) {
                         enemy.speed -= 20;
-                    })
+                    });
                     allEnemies.push(enemy2, enemy5, enemy8);
                     break;
             }
         }
     },
+    /* Reset game
+     * Restore enemy numbers and speed
+     * Put player back to start position
+     * Restore number of hearts
+     */
     gameReset: function() {
         allEnemies.splice(4);
         player.reset();
@@ -45,6 +58,9 @@ var game = {
         });
         allHearts.push(heart1, heart2, heart3);
     },
+    /* This function updates the player's score
+     * Tracks lives and level
+     */
     displayGameResults: function() {
         var livesBox = document.getElementById('lives');
         var scoreBox = document.getElementById('score');
@@ -57,6 +73,9 @@ var game = {
         levelBox.innerHTML = '';
         levelBox.innerHTML = '<p>Level: ' + player.level + ' / ' + game.TOTAL_LEVELS + '</p>';
     },
+    /* This function shows the welcome message
+     * Allows player to start game
+     */
     welcomeScreen: function(keyCode) {
         if (game.play !== true &&
             player.lose !== true &&
@@ -69,6 +88,9 @@ var game = {
             document.getElementById('welcome').style.display = 'none';
         }
     },
+    /* This function shows the game over message
+     * Allows player to restart game
+     */
     gameOverScreen: function(keyCode) {
         var messageBox = document.getElementById('message');
         if (player.lose) {
@@ -84,6 +106,9 @@ var game = {
             game.gameReset();
         }
     },
+    /* This function shows the won game message
+     * Allows player to restart game
+     */
     wonGameMessage: function(keyCode) {
         var messageBox = document.getElementById('message');
         if (player.win) {
@@ -99,10 +124,10 @@ var game = {
             game.gameReset();
         }
     }
-}
+};
 
 
-//create Drawable superclass
+// Drawable superclass
 var Drawable = function(x, y, sprite, height, width) {
     this.x = x;
     this.y = y;
@@ -110,18 +135,22 @@ var Drawable = function(x, y, sprite, height, width) {
     this.width = width;
     this.height = height;
 
-}
+};
 
+// This renders the object to the canvas
 Drawable.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y, this.width, this.height);
 
-}
+};
 
-// Enemies our player must avoid
+/* Enemy global variables
+ * Used as arguments in object instances
+ */
 var ENEMY_X = [-205, -155, -105, -55, -5, 505, 555, 605, 655, 705];
 var ENEMY_Y = [139, 183, 223, 267, 307, 351];
 var enemySpriteArray = ['images/enemy-bugNTL.png', 'images/enemy-bugNTR.png'];
 
+// Enemy sub-class
 var Enemy = function(x, y, speed, sprite) {
     Drawable.call(this, x, y, sprite);
     this.startX = x;
@@ -131,7 +160,7 @@ var Enemy = function(x, y, speed, sprite) {
     this.sprite = sprite;
     this.width = 45;
     this.height = 33;
-}
+};
 
 Enemy.prototype = Object.create(Drawable.prototype);
 Enemy.prototype.constructor = Enemy;
@@ -165,40 +194,42 @@ Enemy.prototype.update = function(dt) {
     this.checkCollision();
 };
 
-// Collision between enemy and player
-//https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
+/* Collision between enemy and player
+ * https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
+ */
 Enemy.prototype.checkCollision = function() {
     if (player.x < this.x + this.width &&
         player.x + player.width > this.x &&
         player.y < this.y + this.height &&
         player.y + player.height > this.y) {
-        console.log("Bug Collision!");
+        //console.log("Bug Collision!");
         player.lives -= 1;
         allHearts.pop();
         player.goHome();
-        //player life
-        if (player.lives === 0
-            && allHearts.length === 0) {
-            game.play = false;
-            player.lose = true;
-        }
+        player.lostGame();
+
     }
 
-}
-
+};
+/* Put enemy back to initial x and y values
+ * Restore initial enemy speed
+ */
 Enemy.prototype.reset = function() {
     this.x = this.startX;
     this.y = this.startY;
     this.speed = this.initialSpeed;
 
-}
+};
 
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
 
-//set player starting position as global variable
-//values are needed as arguments in instantiation of player object
+
+/* Set player starting positions as global variable
+ * values are needed as arguments in instantiation
+ * of player object
+ */
 var PLAYER_STARTX = game.CANVAS_WIDTH / 2 - 35; //canvas width - playerwidth /2 = x value
 var PLAYER_STARTY = 470;
 
@@ -211,17 +242,22 @@ var Player = function(x, y) {
     this.lives = 3;
     this.level = 1;
     this.lose = false;
-    this.win = false
-}
+    this.win = false;
+};
 
 Player.prototype = Object.create(Drawable.prototype);
 Player.prototype.constructor = Player;
 
+/* Calls checkBoundaries method
+ * Invokes getScore method to keep track
+ * of score
+ */
 Player.prototype.update = function(dt) {
     this.getScore();
     this.checkBoundaries();
-}
+};
 
+// Sets step distance of player
 Player.prototype.handleInput = function(keyCode) {
     switch (keyCode) {
         case 'left':
@@ -237,8 +273,9 @@ Player.prototype.handleInput = function(keyCode) {
             this.y -= 42;
             break;
     }
-}
+};
 
+// Sets boundaries for player
 Player.prototype.checkBoundaries = function() {
     // Collision with boundaries
     //check for x boundaries of canvas
@@ -261,8 +298,12 @@ Player.prototype.checkBoundaries = function() {
     if (this.y <= game.IN_WATER) {
         this.goHome();
     }
-}
+};
 
+/* Tracks points
+ * Decides to go up a level or not
+ * Calls won method
+ */
 Player.prototype.getScore = function() {
     //if player reaches the water,
     //add 10 points
@@ -272,16 +313,29 @@ Player.prototype.getScore = function() {
         game.advanceGame();
     }
     this.won();
-}
+};
 
+// Sets conditions for winning game
 Player.prototype.won = function() {
     if (this.level === game.TOTAL_LEVELS &&
         this.score === game.MAX_SCORE &&
-        this.lives > 0) {
+        this.lives >= 1) {
         this.win = true;
     }
-}
+};
 
+// Sets conditions for losing game
+Player.prototype.lostGame = function(){
+    if (this.lives < 1) {
+        game.play = false;
+        this.lose = true;
+    }
+};
+
+/* Sets player back to starting position
+ * Cleans score board
+ * Resets booleans
+ */
 Player.prototype.reset = function() {
     this.goHome();
     this.score = 0;
@@ -289,19 +343,23 @@ Player.prototype.reset = function() {
     this.lives = 3;
     this.lose = false;
     this.win = false;
-}
+};
 
+// Sets player back to starting position
 Player.prototype.goHome = function() {
     this.x = PLAYER_STARTX;
     this.y = PLAYER_STARTY;
-}
+};
 
+/* The Heart Subclass
+ * Hearts represent player lives
+ */
 var Heart = function(x, y) {
     Drawable.call(this, x, y);
     this.sprite = 'images/HeartNT.png';
     this.width = 38;
     this.height = 34;
-}
+};
 
 Heart.prototype = Object.create(Drawable.prototype);
 Heart.prototype.constructor = Heart;
@@ -344,15 +402,17 @@ var allEnemies = [enemy1, enemy6, enemy9, enemy11];
 
 /*Generic functions*/
 
-//returns a random number between min and max.
-//https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+/* Returns a random number between min and max.
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+ */
 function randomize(min, max) {
     return Math.floor(Math.random() * (max - min)) + min;
 }
 
-// This listens for key presses and sends the keys to your
-// Player.handleInput() method. You don't need to modify this.
-//change from keyup to keydown so that when user holds key down its smoother.
+/* This listens for key presses and sends the keys to your
+ * Player.handleInput() method. You don't need to modify this.
+ * Change from keyup to keydown.
+ */
 document.addEventListener('keydown', function(e) {
     var allowedKeys = {
         32: 'space',
@@ -362,7 +422,6 @@ document.addEventListener('keydown', function(e) {
         39: 'right',
         40: 'down'
     };
-    //e.preventDefault();//prevent keys from scolling during play
     player.handleInput(allowedKeys[e.keyCode]);
     game.welcomeScreen(allowedKeys[e.keyCode]);
     game.gameOverScreen(allowedKeys[e.keyCode]);
