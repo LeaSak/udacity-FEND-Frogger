@@ -153,11 +153,9 @@ var Engine = (function(global) {
             renderEntities();
             game.displayGameResults(); // show and update scoreboard
             allHearts.forEach(function(heart) {
-            heart.render(); // display hearts
-        });
-        }
-        else {
-
+                heart.render(); // display hearts
+            });
+        } else {
             game.welcomeScreen(); // show welcome screen
         }
     }

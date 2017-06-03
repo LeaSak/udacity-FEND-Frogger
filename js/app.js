@@ -127,7 +127,15 @@ var game = {
 };
 
 
-// Drawable superclass
+/**
+ * @description Represents a drawable game object
+ * @constructor
+ * @param {number} x - x position of object
+ * @param {number} y - y position of object
+ * @param {string} sprite - image url of object
+ * @param {number} height - object height
+ * @param {number} width - object width
+ */
 var Drawable = function(x, y, sprite, height, width) {
     this.x = x;
     this.y = y;
@@ -150,7 +158,14 @@ var ENEMY_X = [-205, -155, -105, -55, -5, 505, 555, 605, 655, 705];
 var ENEMY_Y = [139, 183, 223, 267, 307, 351];
 var enemySpriteArray = ['images/enemy-bugNTL.png', 'images/enemy-bugNTR.png'];
 
-// Enemy sub-class
+/**
+ * @description Enemy subclass
+ * @constructor
+ * @param {number} x - x position of object
+ * @param {number} y - y position of object
+ * @param {number} speed - speed of object
+ * @param {string} sprite - object image url
+ */
 var Enemy = function(x, y, speed, sprite) {
     Drawable.call(this, x, y, sprite);
     this.startX = x;
@@ -173,20 +188,12 @@ Enemy.prototype.update = function(dt) {
     // all computers.
     //move bugs from left
     if (this.sprite === enemySpriteArray[0]) {
-        if (this.x > game.BOUNDARY_RIGHT) {
-            this.x = 0;
-        } else {
-            this.x += this.speed * dt;
-        }
+        this.x > game.BOUNDARY_RIGHT ? this.x = 0 : this.x += this.speed * dt;
     }
 
     // Move bugs from right
     if (this.sprite === enemySpriteArray[1]) {
-        if (this.x < game.BOUNDARY_LEFT) {
-            this.x = game.CANVAS_WIDTH;
-        } else {
-            this.x -= this.speed * dt;
-        }
+        this.x < game.BOUNDARY_LEFT ? this.x = game.CANVAS_WIDTH : this.x -= this.speed * dt;
     }
 
     // Makes bugs jitter vertically
@@ -202,7 +209,6 @@ Enemy.prototype.checkCollision = function() {
         player.x + player.width > this.x &&
         player.y < this.y + this.height &&
         player.y + player.height > this.y) {
-        //console.log("Bug Collision!");
         player.lives -= 1;
         allHearts.pop();
         player.goHome();
@@ -233,6 +239,12 @@ Enemy.prototype.reset = function() {
 var PLAYER_STARTX = game.CANVAS_WIDTH / 2 - 35; //canvas width - playerwidth /2 = x value
 var PLAYER_STARTY = 470;
 
+/**
+ * @description Player subclass
+ * @constructor
+ * @param {number} x - x position of object
+ * @param {number} y - y position of object
+ */
 var Player = function(x, y) {
     Drawable.call(this, x, y);
     this.sprite = 'images/char-boyNT.png';
@@ -325,7 +337,7 @@ Player.prototype.won = function() {
 };
 
 // Sets conditions for losing game
-Player.prototype.lostGame = function(){
+Player.prototype.lostGame = function() {
     if (this.lives < 1) {
         game.play = false;
         this.lose = true;
@@ -351,8 +363,12 @@ Player.prototype.goHome = function() {
     this.y = PLAYER_STARTY;
 };
 
-/* The Heart Subclass
- * Hearts represent player lives
+
+/**
+ * @description Heart subclass representing player lives
+ * @constructor
+ * @param {number} x - x position of object
+ * @param {number} y - y position of object
  */
 var Heart = function(x, y) {
     Drawable.call(this, x, y);
@@ -364,7 +380,7 @@ var Heart = function(x, y) {
 Heart.prototype = Object.create(Drawable.prototype);
 Heart.prototype.constructor = Heart;
 
-// Now instantiate your objects.
+// Instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
