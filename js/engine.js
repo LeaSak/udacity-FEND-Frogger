@@ -26,8 +26,8 @@ var Engine = (function(global) {
         gamebox = doc.getElementById("gamebox"),
         lastTime;
 
-    canvas.width = 500;
-    canvas.height = 600;
+    canvas.width = game.CANVAS_WIDTH;
+    canvas.height = game.CANVAS_HEIGHT;
     // doc.body.appendChild(canvas);
     //append canvas to container div
     gamebox.appendChild(canvas);

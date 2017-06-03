@@ -2,7 +2,8 @@
     border: 1px solid blue;
 }*/
 
-html, body {
+html,
+body {
     height: 100%;
     width: 100%;
     box-sizing: border-box;
@@ -15,22 +16,21 @@ body {
     font-family: 'Space Mono', monospace;
 }
 
-
 .welcome {
-  height: 700px;
-  width: 500px;
-  overflow: auto;
-  background-color: black;
-  margin: auto;
-  position: absolute;
-  left: 0;
-  right: 0;
-  margin: auto;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+    height: 700px;
+    width: 500px;
+    overflow: auto;
+    background-color: black;
+    margin: auto;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .welcome-text {
@@ -47,12 +47,14 @@ body {
 }
 
 .instructions {
-  color: #536DFE;
+    color: #536DFE;
 }
-.container{
+
+.container {
     position: relative;
     margin-top: 100px;
 }
+
 .scoreboard {
     width: 500px;
     margin: 0 auto;
@@ -66,7 +68,7 @@ body {
     border: 2px solid #CFD8DC;
 }
 
-.level{
+.level {
     margin-right: 0;
 }
 
