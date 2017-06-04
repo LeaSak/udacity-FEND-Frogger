@@ -1,3 +1,4 @@
+'use strict';
 /* The game object stores all game related
  * attributes and methods
  */
@@ -217,6 +218,7 @@ Enemy.prototype.checkCollision = function() {
     }
 
 };
+
 /* Put enemy back to initial x and y values
  * Restore initial enemy speed
  */
