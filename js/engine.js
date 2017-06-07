@@ -26,6 +26,11 @@ var Engine = (function(global) {
         gamebox = doc.getElementById("gamebox"),
         lastTime;
 
+    var game = app.game,
+        player = app.player,
+        allEnemies = app.allEnemies,
+        allHearts = app.allHearts;
+
     canvas.width = game.CANVAS_WIDTH;
     canvas.height = game.CANVAS_HEIGHT;
     //append canvas to container div

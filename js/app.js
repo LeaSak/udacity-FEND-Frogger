@@ -1,4 +1,7 @@
-(function(global) {
+/* Create a namespace called app*/
+var app = app || {};
+
+(function() {
     "use strict";
     /* The game object stores all game related
      * attributes and methods
@@ -450,8 +453,8 @@
     /* Assign game, player, allEnemies and allHearts to the global variable (the window
      * to use it more easily from within engine.js files.
      */
-    global.game = game;
-    global.player = player;
-    global.allEnemies = allEnemies;
-    global.allHearts = allHearts;
-})(this);
+    app.game = game;
+    app.player = player;
+    app.allEnemies = allEnemies;
+    app.allHearts = allHearts;
+})();
