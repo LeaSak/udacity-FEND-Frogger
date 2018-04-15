@@ -3,6 +3,10 @@
 
 The aim of this project was to develop an online game inspired by the arcade game Frogger using object oriented programming principles in JavaScript. The starting point for this project were the resources found in this [repository](https://github.com/udacity/frontend-nanodegree-arcade-game).
 
+<p align="center">
+  <img width="auto" height="auto" src="https://github.com/LeaSak/udacity-FEND-Frogger/blob/master/screenshot-game.png?raw=true" alt="Frogger Game Screenshot">
+</p>
+
 ## Getting Started
 
 First go to the master branch of the project and get a copy of the repository by either downloading the project files to your computer or via the command line.
